@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { RoleGuard } from "@/components/role-guard"
 import { supabase } from "@/lib/supabase"
 import type { Persona } from "@/types"
 import { format } from "date-fns"
@@ -114,12 +115,14 @@ export default function PersonasPage() {
           <h1 className="text-3xl font-bold tracking-tight">Personas</h1>
           <p className="text-muted-foreground">Gestiona el registro de personas en el sistema</p>
         </div>
-        <Link href="/personas/nuevo">
-          <Button>
-            <Plus className="mr-2 h-4 w-4" />
-            Nueva Persona
-          </Button>
-        </Link>
+        <RoleGuard allowedRoles={["ADMIN"]}>
+          <Link href="/personas/nuevo">
+            <Button>
+              <Plus className="mr-2 h-4 w-4" />
+              Nueva Persona
+            </Button>
+          </Link>
+        </RoleGuard>
       </div>
 
       <Card>
@@ -158,7 +161,7 @@ export default function PersonasPage() {
             </div>
             <div>
               <label className="text-sm font-medium mb-2 block">Dirección</label>
-              <Button variant="outline" onClick={toggleOrderDirection} className="w-full">
+              <Button variant="outline" onClick={toggleOrderDirection} className="w-full bg-transparent">
                 {orderDirection === "asc" ? "Ascendente" : "Descendente"}
                 <ArrowUpDown className="ml-2 h-4 w-4" />
               </Button>
@@ -227,11 +230,13 @@ export default function PersonasPage() {
                             Ver
                           </Button>
                         </Link>
-                        <Link href={`/personas/${persona.id}/editar`}>
-                          <Button variant="outline" size="sm">
-                            Editar
-                          </Button>
-                        </Link>
+                        <RoleGuard allowedRoles={["ADMIN"]}>
+                          <Link href={`/personas/${persona.id}/editar`}>
+                            <Button variant="outline" size="sm">
+                              Editar
+                            </Button>
+                          </Link>
+                        </RoleGuard>
                       </div>
                     </td>
                   </tr>
@@ -244,3 +249,4 @@ export default function PersonasPage() {
     </div>
   )
 }
+

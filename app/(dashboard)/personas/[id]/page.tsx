@@ -1,6 +1,8 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { RoleGuard } from "@/components/role-guard"
 import { createServerSupabaseClient } from "@/lib/supabase"
+import { CARCELES } from "@/lib/constants"
 import type { PersonaCompleta } from "@/types"
 import { format } from "date-fns"
 import { es } from "date-fns/locale"
@@ -72,21 +74,23 @@ export default async function PersonaPage({ params }: { params: { id: string } }
           </h1>
         </div>
         <div className="flex items-center gap-2">
-          <Link href={`/personas/${persona.id}/editar`}>
-            <Button variant="outline">
-              <Edit className="mr-2 h-4 w-4" />
-              Editar
-            </Button>
-          </Link>
-
-          {!persona.delincuente && (
-            <Link href={`/delincuentes/nuevo?personaId=${persona.id}`}>
-              <Button>
-                <UserCheck className="mr-2 h-4 w-4" />
-                Registrar como Delincuente
+          <RoleGuard allowedRoles={["ADMIN"]}>
+            <Link href={`/personas/${persona.id}/editar`}>
+              <Button variant="outline">
+                <Edit className="mr-2 h-4 w-4" />
+                Editar
               </Button>
             </Link>
-          )}
+
+            {!persona.delincuente && (
+              <Link href={`/delincuentes/nuevo?personaId=${persona.id}`}>
+                <Button>
+                  <UserCheck className="mr-2 h-4 w-4" />
+                  Registrar como Delincuente
+                </Button>
+              </Link>
+            )}
+          </RoleGuard>
         </div>
       </div>
 
@@ -181,8 +185,12 @@ export default async function PersonaPage({ params }: { params: { id: string } }
             <CardContent className="space-y-4">
               <div className="grid grid-cols-3 gap-4">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">ID Cárcel</p>
-                  <p>{persona.estatus_penitenciario.id_carcel}</p>
+                  <p className="text-sm font-medium text-muted-foreground">Cárcel</p>
+                  <p>
+                    {persona.estatus_penitenciario.id_carcel} -{" "}
+                    {CARCELES[persona.estatus_penitenciario.id_carcel as keyof typeof CARCELES] ||
+                      "Cárcel no identificada"}
+                  </p>
                 </div>
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">ID Celda</p>
@@ -271,3 +279,4 @@ export default async function PersonaPage({ params }: { params: { id: string } }
     </div>
   )
 }
+

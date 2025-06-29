@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button"
+import { RoleGuard } from "@/components/role-guard"
 import { createServerSupabaseClient } from "@/lib/supabase"
 import { format } from "date-fns"
 import { es } from "date-fns/locale"
@@ -103,12 +104,14 @@ export default async function DelincuentesPage() {
           <h1 className="text-3xl font-bold tracking-tight">Delincuentes</h1>
           <p className="text-muted-foreground">Listado de delincuentes registrados en el sistema</p>
         </div>
-        <Link href="/delincuentes/nuevo">
-          <Button>
-            <Plus className="mr-2 h-4 w-4" />
-            Nuevo Delincuente
-          </Button>
-        </Link>
+        <RoleGuard allowedRoles={["ADMIN"]}>
+          <Link href="/delincuentes/nuevo">
+            <Button>
+              <Plus className="mr-2 h-4 w-4" />
+              Nuevo Delincuente
+            </Button>
+          </Link>
+        </RoleGuard>
       </div>
 
       <div className="border rounded-md">
@@ -175,3 +178,5 @@ export default async function DelincuentesPage() {
     </div>
   )
 }
+
+
